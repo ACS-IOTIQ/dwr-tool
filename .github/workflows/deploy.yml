@@ -1,0 +1,41 @@
+name: Deploy DWR Tool
+ 
+on:
+  push:
+    branches:
+      - main
+ 
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+ 
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 74.207.226.174
+          username: root
+          password: ${{ secrets.SERVER_PASSWORD }}
+          script: |
+            set -e
+ 
+            cd /root/dwr-tool
+ 
+            echo "Pulling latest code..."
+            git pull origin main
+ 
+            echo "Installing & building frontend..."
+            cd frontend
+            npm ci
+            npm run build
+ 
+            echo "Restarting backend..."
+            systemctl restart dwr-backend
+ 
+            echo "Reloading nginx..."
+            systemctl reload nginx
+ 
+            echo "Optional: clear nginx cache"
+            rm -rf /var/cache/nginx/* || true
+ 
+            echo "Deployment complete"

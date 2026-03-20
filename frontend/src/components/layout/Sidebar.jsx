@@ -36,7 +36,7 @@ export default function Sidebar() {
   return (
     <Sider collapsible breakpoint="lg" style={{ background: '#001529' }}>
       <div style={{ color: '#fff', textAlign: 'center', padding: '16px 8px', fontWeight: 700, fontSize: 15 }}>
-        📋 DWR Tool
+        DWR Tool
       </div>
       <Menu
         theme="dark"
