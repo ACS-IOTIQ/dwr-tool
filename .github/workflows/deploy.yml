@@ -4,38 +4,26 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:   # <-- allows manual trigger from GitHub UI
  
 jobs:
   deploy:
     runs-on: ubuntu-latest
  
     steps:
+      - uses: actions/checkout@v3
+
       - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@v1.0.0
         with:
           host: 74.207.226.174
           username: root
-          password: ${{ secrets.SERVER_PASSWORD }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            set -e
- 
-            cd /root/dwr-tool
- 
-            echo "Pulling latest code..."
-            git pull origin main
- 
-            echo "Installing & building frontend..."
-            cd frontend
-            npm ci
-            npm run build
- 
-            echo "Restarting backend..."
-            systemctl restart dwr-backend
- 
-            echo "Reloading nginx..."
-            systemctl reload nginx
- 
-            echo "Optional: clear nginx cache"
+            cd /root/dwr-tool && \
+            git pull origin main && \
+            cd frontend && \
+            npm ci && npm run build && \
+            systemctl restart dwr-backend && \
+            systemctl reload nginx && \
             rm -rf /var/cache/nginx/* || true
- 
-            echo "Deployment complete"
