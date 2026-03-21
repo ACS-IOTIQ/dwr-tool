@@ -7,11 +7,13 @@ import { useAuthStore } from '../../store/authStore'
 import { isAdmin, isRM } from '../../utils/roleUtils'
 import { useUsers } from '../../hooks/useUsers'
 import EmptyState from '../common/EmptyState'
+import { useNavigate } from 'react-router-dom'
 
 const { Title } = Typography
 
-export default function FeedbackPanel({ reportId }) {
+export default function FeedbackPanel({ reportId, filters }) {
   const [form] = Form.useForm()
+  const navigate = useNavigate()
   const { data: feedbacks, isLoading } = useFeedback(reportId)
   const postFeedback = usePostFeedback(reportId)
   const { user } = useAuthStore()
@@ -19,7 +21,13 @@ export default function FeedbackPanel({ reportId }) {
   const canPost = isAdmin(user) || isRM(user, allUsers)
 
   const handlePost = (vals) => {
-    postFeedback.mutate(vals, { onSuccess: () => form.resetFields() })
+    postFeedback.mutate(vals, { 
+      onSuccess: () => {
+        form.resetFields()
+        // Navigate back to report explorer with filters
+        navigate('/report-explorer', { state: { filters } })
+      }
+    })
   }
 
   return (

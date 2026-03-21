@@ -26,21 +26,21 @@ export default function ReportFilterBar({ users, workTypes, onSearch, loading })
   return (
     <Form form={form} layout="vertical">
       <Row gutter={12}>
-        <Col span={6}>
+        <Col span={4}>
           <Form.Item name="user_ids" label="Team Member">
             <Select mode="multiple" placeholder="All members" allowClear>
               {users?.map(u => <Select.Option key={u.id} value={u.id}>{u.name}</Select.Option>)}
             </Select>
           </Form.Item>
         </Col>
-        <Col span={6}>
+        <Col span={4}>
           <Form.Item name="work_type_ids" label="Work Type">
             <Select mode="multiple" placeholder="All types" allowClear>
               {workTypes?.map(w => <Select.Option key={w.id} value={w.id}>{w.label}</Select.Option>)}
             </Select>
           </Form.Item>
         </Col>
-        <Col span={6}>
+        <Col span={4}>
           <Form.Item name="date_range" label="Date Range">
             <RangePicker style={{ width: '100%' }}
               presets={[
@@ -56,6 +56,22 @@ export default function ReportFilterBar({ users, workTypes, onSearch, loading })
           <Form.Item name="review_status" label="Review Status">
             <Select allowClear placeholder="Any">
               {['PENDING','REVIEWED','FLAGGED'].map(s => <Select.Option key={s} value={s}>{s}</Select.Option>)}
+            </Select>
+          </Form.Item>
+        </Col>
+        <Col span={3}>
+          <Form.Item name="is_late" label="Late Status">
+            <Select allowClear placeholder="Any">
+              <Select.Option value={true}>Late</Select.Option>
+              <Select.Option value={false}>On Time</Select.Option>
+            </Select>
+          </Form.Item>
+        </Col>
+        <Col span={3}>
+          <Form.Item name="has_blockers" label="Blockers">
+            <Select allowClear placeholder="Any">
+              <Select.Option value={true}>Has Blockers</Select.Option>
+              <Select.Option value={false}>No Blockers</Select.Option>
             </Select>
           </Form.Item>
         </Col>

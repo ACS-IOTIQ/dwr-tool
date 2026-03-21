@@ -1,8 +1,8 @@
 
 // ── frontend/src/pages/ReportExplorerPage.jsx ───────────────────
 import { Typography, Table, Button, Space, Tag } from 'antd'
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import ReportFilterBar from '../components/reports/ReportFilterBar'
 import { ReviewStatusBadge, SubmissionStatusBadge } from '../components/common/StatusBadge'
 import { useUsers } from '../hooks/useUsers'
@@ -15,6 +15,7 @@ const { Title } = Typography
 
 export default function ReportExplorerPage() {
   const nav = useNavigate()
+  const location = useLocation()
   const [filters, setFilters] = useState(null)
   const { data: users } = useUsers()
   const { data: workTypes } = useQuery({ queryKey: ['work-types'], queryFn: () => getWorkTypes().then(r => r.data) })
@@ -23,6 +24,13 @@ export default function ReportExplorerPage() {
     queryFn: () => searchReports(filters || {}).then(r => r.data),
     enabled: !!filters,
   })
+
+  // Restore filters from navigation state
+  useEffect(() => {
+    if (location.state?.filters) {
+      setFilters(location.state.filters)
+    }
+  }, [location.state])
 
   const cols = [
     { title: 'Member', dataIndex: ['user', 'name'], key: 'name' },
@@ -34,7 +42,7 @@ export default function ReportExplorerPage() {
     { title: 'Late?', dataIndex: 'is_late', render: v => v ? <Tag color="orange">Late</Tag> : null },
     { title: 'Blockers', dataIndex: 'blockers', render: v => v ? <Tag color="red">Yes</Tag> : null },
     { title: 'Review', dataIndex: 'review_status', render: s => <ReviewStatusBadge status={s} /> },
-    { key: 'action', render: (_, r) => <Button size="small" onClick={() => nav(`/reports/${r.id}`)}>View</Button> },
+    { key: 'action', render: (_, r) => <Button size="small" onClick={() => nav(`/reports/${r.id}`, { state: { filters } })}>View</Button> },
   ]
 
   return (

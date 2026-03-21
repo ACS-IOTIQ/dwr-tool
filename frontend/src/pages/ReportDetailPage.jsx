@@ -1,6 +1,6 @@
 
 // ── frontend/src/pages/ReportDetailPage.jsx ─────────────────────
-import { useParams } from 'react-router-dom'
+import { useParams, useLocation } from 'react-router-dom'
 import { Row, Col, Select, Space, Typography } from 'antd'
 import { useReport, useUpdateReportStatus } from '../hooks/useReports'
 import ReportCard from '../components/reports/ReportCard'
@@ -12,6 +12,8 @@ import { useUsers } from '../hooks/useUsers'
 
 export default function ReportDetailPage() {
   const { id } = useParams()
+  const location = useLocation()
+  const filters = location.state?.filters
   const { data: report, isLoading } = useReport(id)
   const updateStatus = useUpdateReportStatus()
   const { user } = useAuthStore()
@@ -38,7 +40,7 @@ export default function ReportDetailPage() {
         )}
       </Col>
       <Col span={8}>
-        <FeedbackPanel reportId={Number(id)} />
+        <FeedbackPanel reportId={Number(id)} filters={filters} />
       </Col>
     </Row>
   )
