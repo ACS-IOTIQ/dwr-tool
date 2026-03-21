@@ -15,6 +15,7 @@ import UsersPage from './pages/UsersPage'
 import WorkTypesPage from './pages/WorkTypesPage'
 import LeavePage from './pages/LeavePage'
 import NotFoundPage from './pages/NotFoundPage'
+import './styles/layout.css'
 
 export default function App() {
   return (

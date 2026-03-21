@@ -19,20 +19,19 @@ export default function Topbar() {
   const [drawerOpen, setDrawerOpen] = useState(false)
 
   return (
-    <Header style={{ background: '#fff', padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', boxShadow: '0 1px 4px rgba(0,0,0,0.1)' }}>
-      <Space size="large">
+    <Header className="app-topbar">
+      <Space size={16} align="center">
         <Badge count={unreadCount} size="small">
-          <Button icon={<BellOutlined />} type="text" onClick={() => setDrawerOpen(true)} />
+          <Button className="topbar-icon-btn" icon={<BellOutlined />} type="text" onClick={() => setDrawerOpen(true)} />
         </Badge>
-        <Space>
+        <div className="app-user">
           <Avatar>{user?.name?.[0]?.toUpperCase()}</Avatar>
-          <span>
-            <Text strong>{user?.name}</Text>
-            <br />
-            <Text type="secondary" style={{ fontSize: 11 }}>{ROLE_LABELS[user?.role]}</Text>
-          </span>
-        </Space>
-        <Button icon={<LogoutOutlined />} type="text" onClick={logout} />
+          <div className="app-user-meta">
+            <Text className="app-user-name">{user?.name}</Text>
+            <Text className="app-user-role">{ROLE_LABELS[user?.role]}</Text>
+          </div>
+        </div>
+        <Button className="topbar-icon-btn" icon={<LogoutOutlined />} type="text" onClick={logout} />
       </Space>
       <NotificationDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
     </Header>

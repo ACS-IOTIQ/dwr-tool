@@ -33,23 +33,23 @@ export default function ReportExplorerPage() {
   }, [location.state])
 
   const cols = [
-    { title: 'Member', dataIndex: ['user', 'name'], key: 'name' },
-    { title: 'Date', dataIndex: 'report_date', render: fmt },
-    { title: 'Tasks', dataIndex: 'tasks', render: t => t?.length },
+    { title: 'Member', dataIndex: ['user', 'name'], key: 'name', width: 150, ellipsis: true },
+    { title: 'Date', dataIndex: 'report_date', render: fmt, width: 100 },
+    { title: 'Tasks', dataIndex: 'tasks', render: t => t?.length, width: 80 },
     { title: 'Work Types', dataIndex: 'tasks', render: tasks => (
       <Space wrap>{[...new Set(tasks?.map(t => t.work_type?.label))].map(l => <Tag key={l}>{l}</Tag>)}</Space>
-    )},
-    { title: 'Late?', dataIndex: 'is_late', render: v => v ? <Tag color="orange">Late</Tag> : null },
-    { title: 'Blockers', dataIndex: 'blockers', render: v => v ? <Tag color="red">Yes</Tag> : null },
-    { title: 'Review', dataIndex: 'review_status', render: s => <ReviewStatusBadge status={s} /> },
-    { key: 'action', render: (_, r) => <Button size="small" onClick={() => nav(`/reports/${r.id}`, { state: { filters } })}>View</Button> },
+    ), width: 200 },
+    { title: 'Late?', dataIndex: 'is_late', render: v => v ? <Tag color="orange">Late</Tag> : null, width: 80 },
+    { title: 'Blockers', dataIndex: 'blockers', render: v => v ? <Tag color="red">Yes</Tag> : null, width: 90 },
+    { title: 'Review', dataIndex: 'review_status', render: s => <ReviewStatusBadge status={s} />, width: 100 },
+    { key: 'action', render: (_, r) => <Button size="small" onClick={() => nav(`/reports/${r.id}`, { state: { filters } })}>View</Button>, width: 80, fixed: 'right' },
   ]
 
   return (
     <>
       <Title level={4}>Report Explorer</Title>
       <ReportFilterBar users={users} workTypes={workTypes} onSearch={f => setFilters(f)} loading={isLoading} />
-      {filters && <Table dataSource={reports} columns={cols} rowKey="id" loading={isLoading} />}
+      {filters && <Table dataSource={reports} columns={cols} rowKey="id" loading={isLoading} scroll={{ x: 800 }} />}
     </>
   )
 }

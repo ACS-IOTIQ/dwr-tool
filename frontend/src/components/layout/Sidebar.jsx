@@ -3,7 +3,7 @@
 import { Layout, Menu } from 'antd'
 import { useNavigate, useLocation } from 'react-router-dom'
 import {
-  DashboardOutlined, FileAddOutlined, FileTextOutlined,
+  AppstoreOutlined, FileAddOutlined, FileTextOutlined,
   TeamOutlined, SearchOutlined, UserOutlined,
   TagsOutlined, CalendarOutlined
 } from '@ant-design/icons'
@@ -22,7 +22,7 @@ export default function Sidebar() {
   const rm = isRM(user, allUsers)
 
   const items = [
-    { key: '/dashboard',       icon: <DashboardOutlined />, label: 'Dashboard' },
+    { key: '/dashboard',       icon: <AppstoreOutlined />, label: 'Dashboard' },
     { key: '/submit-report',   icon: <FileAddOutlined />,   label: 'Submit Report' },
     { key: '/my-reports',      icon: <FileTextOutlined />,  label: 'My Reports' },
     (admin || rm) && { key: '/team-status',     icon: <TeamOutlined />,     label: 'Team Status' },
@@ -34,15 +34,18 @@ export default function Sidebar() {
   ].filter(Boolean)
 
   return (
-    <Sider collapsible breakpoint="lg" style={{ background: '#001529' }}>
-      <div style={{ color: '#fff', textAlign: 'center', padding: '16px 8px', fontWeight: 700, fontSize: 15 }}>
-        DWR Tool
+    <Sider collapsible breakpoint="lg" className="app-sider">
+      <div className="app-brand">
+        <span className="app-brand-mark">DWR</span>
+        <span className="app-brand-text">Tool</span>
       </div>
       <Menu
         theme="dark"
         selectedKeys={[loc.pathname]}
         mode="inline"
+        className="app-sider-menu"
         items={items}
+        inlineIndent={18}
         onClick={({ key }) => nav(key)}
       />
     </Sider>

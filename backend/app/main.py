@@ -1,4 +1,10 @@
 # ── backend/app/main.py ──────────────────────────────────────────
+import sys
+from pathlib import Path
+
+# Add the parent directory to Python path so we can import from app
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routers import auth, users, reports, feedback, notifications, leave, work_types

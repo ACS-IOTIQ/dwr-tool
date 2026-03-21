@@ -1,0 +1,132 @@
+.app-sider {
+  background: linear-gradient(180deg, #0b1220 0%, #0a1a2f 60%, #091426 100%);
+  box-shadow: 2px 0 12px rgba(8, 12, 24, 0.45);
+}
+
+.app-sider .ant-layout-sider-children {
+  display: flex;
+  flex-direction: column;
+}
+
+.app-brand {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #e6f4ff;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+
+.app-brand-mark {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.app-brand-text {
+  font-size: 15px;
+}
+
+.app-sider-menu {
+  background: transparent;
+  border-inline-end: 0;
+  padding: 6px 10px 16px;
+}
+
+.app-sider-menu .ant-menu-item {
+  height: 44px;
+  line-height: 44px;
+  margin: 6px 0;
+  border-radius: 10px;
+  padding-inline: 12px !important;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.app-sider-menu .ant-menu-item .anticon {
+  font-size: 18px;
+}
+
+.app-sider-menu .ant-menu-item .ant-menu-title-content {
+  font-size: 14px;
+}
+
+.app-sider-menu .ant-menu-item-selected {
+  background: rgba(64, 148, 255, 0.2) !important;
+  color: #ffffff !important;
+  box-shadow: inset 0 0 0 1px rgba(80, 160, 255, 0.28);
+}
+
+.app-sider-menu .ant-menu-item-selected::after {
+  border-right: 0;
+}
+
+.app-sider-menu .ant-menu-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.app-sider.ant-layout-sider-collapsed .app-brand-text {
+  display: none;
+}
+
+.app-sider.ant-layout-sider-collapsed .app-sider-menu {
+  padding: 6px 6px 16px;
+}
+
+.app-sider.ant-layout-sider-collapsed .app-sider-menu .ant-menu-item {
+  justify-content: center;
+  padding-inline: 0 !important;
+}
+
+.app-topbar {
+  background: #ffffff;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 64px;
+  box-shadow: 0 1px 6px rgba(15, 23, 42, 0.12);
+}
+
+.app-topbar .ant-space {
+  align-items: center;
+}
+
+.app-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.app-user-meta {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.app-user-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.app-user-role {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.topbar-icon-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+}
+
+.topbar-icon-btn:hover {
+  background: rgba(15, 23, 42, 0.06);
+}
