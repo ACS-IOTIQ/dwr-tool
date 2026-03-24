@@ -10,6 +10,7 @@ import SubmitReportPage from './pages/SubmitReportPage'
 import MyReportsPage from './pages/MyReportsPage'
 import TeamStatusPage from './pages/TeamStatusPage'
 import ReportExplorerPage from './pages/ReportExplorerPage'
+import AnalyzePage from './pages/AnalyzePage'
 import ReportDetailPage from './pages/ReportDetailPage'
 import UsersPage from './pages/UsersPage'
 import WorkTypesPage from './pages/WorkTypesPage'
@@ -33,6 +34,7 @@ export default function App() {
               <Route element={<ProtectedRoute roles={['ADMIN','RM']} />}>
                 <Route path="/team-status" element={<TeamStatusPage />} />
                 <Route path="/report-explorer" element={<ReportExplorerPage />} />
+                <Route path="/analyze" element={<AnalyzePage />} />
               </Route>
               <Route path="/reports/:id" element={<ReportDetailPage />} />
               {/* Admin only */}

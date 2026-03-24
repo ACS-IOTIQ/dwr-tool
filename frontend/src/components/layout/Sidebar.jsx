@@ -5,11 +5,11 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import {
   AppstoreOutlined, FileAddOutlined, FileTextOutlined,
   TeamOutlined, SearchOutlined, UserOutlined,
-  TagsOutlined, CalendarOutlined
+  TagsOutlined, CalendarOutlined, BarChartOutlined
 } from '@ant-design/icons'
 import { useAuthStore } from '../../store/authStore'
 import { isAdmin, isRM } from '../../utils/roleUtils'
-import { useUsers } from '../../hooks/useUsers'
+import { useVisibleUsers } from '../../hooks/useUsers'
 
 const { Sider } = Layout
 
@@ -17,7 +17,7 @@ export default function Sidebar() {
   const nav = useNavigate()
   const loc = useLocation()
   const { user } = useAuthStore()
-  const { data: allUsers } = useUsers()
+  const { data: allUsers } = useVisibleUsers()
   const admin = isAdmin(user)
   const rm = isRM(user, allUsers)
 
@@ -27,6 +27,7 @@ export default function Sidebar() {
     { key: '/my-reports',      icon: <FileTextOutlined />,  label: 'My Reports' },
     (admin || rm) && { key: '/team-status',     icon: <TeamOutlined />,     label: 'Team Status' },
     (admin || rm) && { key: '/report-explorer', icon: <SearchOutlined />,   label: 'Report Explorer' },
+    (admin || rm) && { key: '/analyze',         icon: <BarChartOutlined />, label: 'Analyze' },
     admin && { type: 'divider' },
     admin && { key: '/users',       icon: <UserOutlined />,  label: 'Users' },
     admin && { key: '/work-types',  icon: <TagsOutlined />,  label: 'Work Types' },

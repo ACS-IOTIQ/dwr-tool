@@ -20,6 +20,12 @@ export const useUsers = () =>
     queryFn: () => usersApi.getUsers().then(r => r.data)
   })
 
+export const useVisibleUsers = () =>
+  useQuery({
+    queryKey: ['visible-users'],
+    queryFn: () => usersApi.getVisibleUsers().then(r => r.data),
+  })
+
 export const useManagers = () =>
   useQuery({
     queryKey: ['managers'],

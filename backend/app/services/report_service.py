@@ -9,7 +9,6 @@ from app.schemas.report import ReportCreate, ReportFilter, DailyStatusEntry
 from app.schemas.user import UserShort
 from app.config import settings
 
-
 def _is_late(submitted_at: datetime) -> bool:
     tz = pytz.timezone(settings.APP_TIMEZONE)
     # submitted_at is naive UTC — make it timezone-aware first

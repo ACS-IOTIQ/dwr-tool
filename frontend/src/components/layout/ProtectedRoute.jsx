@@ -2,11 +2,11 @@
 import { Navigate, Outlet } from 'react-router-dom'
 import { useAuthStore } from '../../store/authStore'
 import { isAdmin, isRM } from '../../utils/roleUtils'
-import { useUsers } from '../../hooks/useUsers'
+import { useVisibleUsers } from '../../hooks/useUsers'
 
 export default function ProtectedRoute({ roles }) {
   const { token, user } = useAuthStore()
-  const { data: allUsers } = useUsers()
+  const { data: allUsers } = useVisibleUsers()
 
   if (!token || !user) return <Navigate to="/login" replace />
 

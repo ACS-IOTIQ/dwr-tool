@@ -8,7 +8,7 @@ import FeedbackPanel from '../components/feedback/FeedbackPanel'
 import LoadingSpinner from '../components/common/LoadingSpinner'
 import { useAuthStore } from '../store/authStore'
 import { isAdmin, isRM } from '../utils/roleUtils'
-import { useUsers } from '../hooks/useUsers'
+import { useVisibleUsers } from '../hooks/useUsers'
 
 export default function ReportDetailPage() {
   const { id } = useParams()
@@ -17,7 +17,7 @@ export default function ReportDetailPage() {
   const { data: report, isLoading } = useReport(id)
   const updateStatus = useUpdateReportStatus()
   const { user } = useAuthStore()
-  const { data: allUsers } = useUsers()
+  const { data: allUsers } = useVisibleUsers()
   const canReview = isAdmin(user) || isRM(user, allUsers)
 
   if (isLoading) return <LoadingSpinner />

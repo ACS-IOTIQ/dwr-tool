@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import ReportFilterBar from '../components/reports/ReportFilterBar'
 import { ReviewStatusBadge, SubmissionStatusBadge } from '../components/common/StatusBadge'
-import { useUsers } from '../hooks/useUsers'
+import { useVisibleUsers } from '../hooks/useUsers'
 import { useQuery } from '@tanstack/react-query'
 import { getWorkTypes } from '../api/workTypesApi'
 import { searchReports } from '../api/reportsApi'
@@ -17,7 +17,7 @@ export default function ReportExplorerPage() {
   const nav = useNavigate()
   const location = useLocation()
   const [filters, setFilters] = useState(null)
-  const { data: users } = useUsers()
+  const { data: users } = useVisibleUsers()
   const { data: workTypes } = useQuery({ queryKey: ['work-types'], queryFn: () => getWorkTypes().then(r => r.data) })
   const { data: reports, isLoading, refetch } = useQuery({
     queryKey: ['report-explorer', filters],

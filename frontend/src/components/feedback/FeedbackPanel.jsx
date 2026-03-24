@@ -5,7 +5,7 @@ import FeedbackCard from './FeedbackCard'
 import { useFeedback, usePostFeedback } from '../../hooks/useFeedback'
 import { useAuthStore } from '../../store/authStore'
 import { isAdmin, isRM } from '../../utils/roleUtils'
-import { useUsers } from '../../hooks/useUsers'
+import { useVisibleUsers } from '../../hooks/useUsers'
 import EmptyState from '../common/EmptyState'
 import { useNavigate } from 'react-router-dom'
 
@@ -17,7 +17,7 @@ export default function FeedbackPanel({ reportId, filters }) {
   const { data: feedbacks, isLoading } = useFeedback(reportId)
   const postFeedback = usePostFeedback(reportId)
   const { user } = useAuthStore()
-  const { data: allUsers } = useUsers()
+  const { data: allUsers } = useVisibleUsers()
   const canPost = isAdmin(user) || isRM(user, allUsers)
 
   const handlePost = (vals) => {

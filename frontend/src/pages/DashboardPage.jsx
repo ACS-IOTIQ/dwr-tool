@@ -3,7 +3,7 @@
 import { Typography, Row, Col, Card, Statistic } from 'antd'
 import { useAuthStore } from '../store/authStore'
 import { isAdmin, isRM } from '../utils/roleUtils'
-import { useUsers } from '../hooks/useUsers'
+import { useVisibleUsers } from '../hooks/useUsers'
 import { useDailyStatus } from '../hooks/useReports'
 import { today } from '../utils/dateUtils'
 import LoadingSpinner from '../components/common/LoadingSpinner'
@@ -12,7 +12,7 @@ const { Title, Text } = Typography
 
 export default function DashboardPage() {
   const { user } = useAuthStore()
-  const { data: allUsers } = useUsers()
+  const { data: allUsers } = useVisibleUsers()
   const canSeeTeam = isAdmin(user) || isRM(user, allUsers)
   const { data: status, isLoading } = useDailyStatus(today())
 

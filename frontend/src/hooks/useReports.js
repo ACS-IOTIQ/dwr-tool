@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import * as reportsApi from '../api/reportsApi'
+import * as analysisApi from '../api/analysisApi'
 import { message } from 'antd'
 
 export const useMyReports = () =>
@@ -22,6 +23,19 @@ export const useSearchReports = (filters) =>
   useQuery({
     queryKey: ['reports-search', filters],
     queryFn: () => reportsApi.searchReports(filters).then(r => r.data),
+    enabled: !!filters,
+  })
+
+export const useAnalysisUsers = () =>
+  useQuery({
+    queryKey: ['analysis-users'],
+    queryFn: () => analysisApi.getAnalysisUsers().then(r => r.data),
+  })
+
+export const useReportAnalysis = (filters) =>
+  useQuery({
+    queryKey: ['report-analysis', filters],
+    queryFn: () => analysisApi.analyzeReports(filters).then(r => r.data),
     enabled: !!filters,
   })
 

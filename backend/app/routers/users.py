@@ -4,8 +4,8 @@ from typing import List
 from app.database import get_db
 from app.schemas.user import UserCreate, UserUpdate, UserRead, PasswordChange
 from app.services.auth_service import hash_password, verify_password
-from app.services.user_service import get_all_active_users, get_user_by_id
-from app.dependencies import get_current_user, require_admin
+from app.services.user_service import get_all_active_users, get_user_by_id, get_visible_user_ids
+from app.dependencies import get_current_user, require_admin, require_admin_or_rm
 from app.models.user import User
 
 router = APIRouter(prefix="/users", tags=["users"])
@@ -32,6 +32,27 @@ def list_managers(
     _: User = Depends(require_admin)
 ):
     return get_all_active_users(db)
+
+
+@router.get("/visible", response_model=List[UserRead])
+def list_visible_users(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin_or_rm)
+):
+    visible_ids = get_visible_user_ids(db, current_user)
+    if visible_ids is None:
+        users = get_all_active_users(db)
+    else:
+        ids = [i for i in visible_ids if i != current_user.id]
+        users = db.query(User).filter(User.id.in_(ids), User.is_active == True).all()
+
+    result = []
+    for u in users:
+        ur = UserRead.model_validate(u)
+        ur.reporting_manager_name = u.reporting_manager.name if u.reporting_manager else None
+        ur.secondary_manager_name = u.secondary_manager.name if u.secondary_manager else None
+        result.append(ur)
+    return result
 
 
 @router.post("/", response_model=UserRead)
