@@ -13,6 +13,7 @@ from .report import Report, ReportTask, ReportStatus, TaskStatus   # depends on 
 from .feedback import Feedback         # depends on Report, User
 from .notification import Notification, NotificationType           # depends on User
 from .leave import LeaveLog            # depends on User
+from .commit_task import CommitTask, CommitTaskStatus             # depends on User
 
 __all__ = [
     "User", "Role",
@@ -21,4 +22,5 @@ __all__ = [
     "Feedback",
     "Notification", "NotificationType",
     "LeaveLog",
+    "CommitTask", "CommitTaskStatus",
 ]

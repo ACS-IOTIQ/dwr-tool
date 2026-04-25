@@ -17,7 +17,7 @@ from app.config import settings
 from app.database import Base
 
 # Import every model module so SQLAlchemy metadata is fully populated
-from app.models import user, work_type, report, feedback, notification, leave  # noqa: F401
+from app.models import user, work_type, report, feedback, notification, leave, commit_task  # noqa: F401
 
 # ── Alembic config object ────────────────────────────────────────
 config = context.config

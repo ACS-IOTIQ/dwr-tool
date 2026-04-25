@@ -7,7 +7,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import auth, users, reports, feedback, notifications, leave, work_types
+from app.routers import auth, users, reports, feedback, notifications, leave, work_types, webhooks, commit_tasks
 
 app = FastAPI(title="DWR Tool API", version="1.0.0")
 
@@ -26,6 +26,8 @@ app.include_router(feedback.router)
 app.include_router(notifications.router)
 app.include_router(leave.router)
 app.include_router(work_types.router)
+app.include_router(webhooks.router)
+app.include_router(commit_tasks.router)
 
 @app.get("/health")
 def health():
