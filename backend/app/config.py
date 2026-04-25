@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     REPORT_CUTOFF_HOUR: int = 18            # 6 PM cutoff
     REPORT_CUTOFF_MINUTE: int = 30
     APP_TIMEZONE: str = "Asia/Kolkata"
+    GITHUB_WEBHOOK_SECRET: str = "rep-task-2026-fawnix"
 
     class Config:
         env_file = ".env"
