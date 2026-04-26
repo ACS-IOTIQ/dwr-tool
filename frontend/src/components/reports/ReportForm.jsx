@@ -1,14 +1,18 @@
 
 // ── frontend/src/components/reports/ReportForm.jsx ───────────────
-import { Form, Button, DatePicker, Input, Rate, Space, Typography, Divider } from 'antd'
+import { useState } from 'react'
+import { Form, Button, DatePicker, Input, Rate, Space, Typography, Divider, message } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs'
 import TaskRow from './TaskRow'
+import { getMyCommitTasks } from '../../api/commitTasksApi'
 
 const { Title } = Typography
 
 export default function ReportForm({ workTypes, onSubmit, loading }) {
   const [form] = Form.useForm()
+  const [isImporting, setIsImporting] = useState(false)
+  const reportDate = Form.useWatch('report_date', form)
 
   const handleFinish = (vals) => {
     const payload = {
@@ -16,9 +20,66 @@ export default function ReportForm({ workTypes, onSubmit, loading }) {
       plan_for_tomorrow: vals.plan_for_tomorrow,
       blockers: vals.blockers,
       mood_rating: vals.mood_rating,
-      tasks: vals.tasks,
+      tasks: (vals.tasks || []).map(({ commit_sha, ...task }) => task),
     }
     onSubmit(payload)
+  }
+
+  const handleImportFromCommits = async () => {
+    if (!reportDate) {
+      message.warning('Select a report date first')
+      return
+    }
+
+    setIsImporting(true)
+    try {
+      const selectedDate = reportDate.format('YYYY-MM-DD')
+      const { data } = await getMyCommitTasks({
+        date_from: selectedDate,
+        date_to: selectedDate,
+        status: 'IMPORTED',
+      })
+
+      if (!data?.length) {
+        message.info('No imported commits found for that date')
+        return
+      }
+
+      const existingTasks = form.getFieldValue('tasks') || []
+      const existingImportedShas = new Set(
+        existingTasks
+          .map(task => task?.commit_sha)
+          .filter(Boolean)
+      )
+
+      const newTasks = data
+        .filter(commit => !existingImportedShas.has(commit.commit_sha))
+        .map(commit => ({
+          work_type_id: undefined,
+          status: 'DONE',
+          time_spent_hours: null,
+          task_description: commit.commit_message,
+          notes: commit.repository_name
+            ? `Imported from ${commit.repository_name} (${commit.commit_sha.slice(0, 7)})`
+            : `Imported from commit ${commit.commit_sha.slice(0, 7)}`,
+          commit_sha: commit.commit_sha,
+        }))
+
+      if (!newTasks.length) {
+        message.info('These commits are already added to the form')
+        return
+      }
+
+      form.setFieldsValue({
+        tasks: [...existingTasks, ...newTasks],
+      })
+      message.success(`Imported ${newTasks.length} commit task${newTasks.length > 1 ? 's' : ''}`)
+    } catch (e) {
+      const detail = e.response?.data?.detail
+      message.error(detail || 'Failed to fetch commit tasks')
+    } finally {
+      setIsImporting(false)
+    }
   }
 
   return (
@@ -35,6 +96,11 @@ export default function ReportForm({ workTypes, onSubmit, loading }) {
       </Form.Item>
 
       <Divider orientation="left">Tasks</Divider>
+      <Space style={{ marginBottom: 16 }}>
+        <Button onClick={handleImportFromCommits} loading={isImporting}>
+          Fetch Tasks From Commits
+        </Button>
+      </Space>
       <Form.List name="tasks">
         {(fields, { add, remove }) => (
           <>
