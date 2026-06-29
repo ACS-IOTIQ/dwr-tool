@@ -6,10 +6,11 @@ import { message } from 'antd'
 export const useMyReports = () =>
   useQuery({ queryKey: ['my-reports'], queryFn: () => reportsApi.getMyReports().then(r => r.data) })
 
-export const useDailyStatus = (date) =>
+export const useDailyStatus = (date, enabled = true) =>
   useQuery({
     queryKey: ['daily-status', date],
     queryFn: () => reportsApi.getDailyStatus(date).then(r => r.data),
+    enabled: !!date && enabled,
   })
 
 export const useReport = (id) =>

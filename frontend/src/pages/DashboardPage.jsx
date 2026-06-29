@@ -95,7 +95,7 @@ export default function DashboardPage() {
   const { user }              = useAuthStore()
   const { data: allUsers }    = useVisibleUsers()
   const canSeeTeam            = isAdmin(user) || isRM(user, allUsers)
-  const { data: status, isLoading: statusLoading } = useDailyStatus(today())
+  const { data: status, isLoading: statusLoading } = useDailyStatus(today(), canSeeTeam)
   const { data: myReports,   isLoading: reportsLoading } = useMyReports()
 
   const todayStr = today()

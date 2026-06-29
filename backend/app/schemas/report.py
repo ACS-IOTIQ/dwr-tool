@@ -18,7 +18,7 @@ class ReportTaskCreate(BaseModel):
 class ReportTaskRead(BaseModel):
     id: int
     work_type_id: int
-    work_type: WorkTypeRead
+    work_type: Optional[WorkTypeRead] = None
     task_description: str
     status: TaskStatus
     time_spent_hours: Optional[float] = None

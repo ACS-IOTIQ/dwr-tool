@@ -58,7 +58,8 @@ def daily_status(
         users = get_all_active_users(db)
     else:
         from app.services.user_service import get_user_by_id
-        users = [get_user_by_id(db, uid) for uid in visible_ids if uid != current_user.id]
+        users = [u for uid in visible_ids if uid != current_user.id
+                 for u in [get_user_by_id(db, uid)] if u is not None]
     return get_daily_status(db, d, users)
 
 @router.post("/search", response_model=List[ReportRead])
