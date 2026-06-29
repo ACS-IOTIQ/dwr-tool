@@ -1,55 +1,20 @@
 
 // ── frontend/src/components/feedback/FeedbackPanel.jsx ───────────
-import { Form, Input, Checkbox, Button, Divider, Typography } from 'antd'
 import FeedbackCard from './FeedbackCard'
-import { useFeedback, usePostFeedback } from '../../hooks/useFeedback'
-import { useAuthStore } from '../../store/authStore'
-import { isAdmin, isRM } from '../../utils/roleUtils'
-import { useVisibleUsers } from '../../hooks/useUsers'
+import { useFeedback } from '../../hooks/useFeedback'
 import EmptyState from '../common/EmptyState'
-import { useNavigate } from 'react-router-dom'
 
-const { Title } = Typography
-
-export default function FeedbackPanel({ reportId, filters }) {
-  const [form] = Form.useForm()
-  const navigate = useNavigate()
+export default function FeedbackPanel({ reportId }) {
   const { data: feedbacks, isLoading } = useFeedback(reportId)
-  const postFeedback = usePostFeedback(reportId)
-  const { user } = useAuthStore()
-  const { data: allUsers } = useVisibleUsers()
-  const canPost = isAdmin(user) || isRM(user, allUsers)
 
-  const handlePost = (vals) => {
-    postFeedback.mutate(vals, { 
-      onSuccess: () => {
-        form.resetFields()
-        // Navigate back to report explorer with filters
-        navigate('/report-explorer', { state: { filters } })
-      }
-    })
-  }
+  if (isLoading) return null
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      {isLoading ? null : feedbacks?.length
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      {feedbacks?.length
         ? feedbacks.map(fb => <FeedbackCard key={fb.id} fb={fb} />)
         : <EmptyState description="No feedback yet" />
       }
-      {canPost && (
-        <Form form={form} onFinish={handlePost} layout="vertical" style={{ marginTop: 8 }}>
-          <Divider orientation="left" plain>Leave Feedback</Divider>
-          <Form.Item name="comment" rules={[{ required: true, message: 'Enter feedback' }]}>
-            <Input.TextArea rows={4} placeholder="Your feedback..." />
-          </Form.Item>
-          <Form.Item name="is_flagged" valuePropName="checked" style={{ marginBottom: 12 }}>
-            <Checkbox>Flag this report for follow-up</Checkbox>
-          </Form.Item>
-          <Button type="primary" htmlType="submit" loading={postFeedback.isPending} block>
-            Post Feedback
-          </Button>
-        </Form>
-      )}
     </div>
   )
 }

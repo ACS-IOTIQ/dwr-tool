@@ -1,8 +1,11 @@
 
 // ── frontend/src/pages/ReportDetailPage.jsx ─────────────────────
-import { useParams, useLocation } from 'react-router-dom'
-import { Row, Col, Select, Card, Space, Typography, Divider } from 'antd'
+import { useState } from 'react'
+import { useParams, useLocation, useNavigate } from 'react-router-dom'
+import { Select, Card, Space, Typography, Button, Drawer, Form, Input, Checkbox } from 'antd'
+import { MessageOutlined } from '@ant-design/icons'
 import { useReport, useUpdateReportStatus } from '../hooks/useReports'
+import { usePostFeedback } from '../hooks/useFeedback'
 import ReportCard from '../components/reports/ReportCard'
 import FeedbackPanel from '../components/feedback/FeedbackPanel'
 import LoadingSpinner from '../components/common/LoadingSpinner'
@@ -13,12 +16,26 @@ import { useVisibleUsers } from '../hooks/useUsers'
 export default function ReportDetailPage() {
   const { id } = useParams()
   const location = useLocation()
+  const navigate = useNavigate()
   const filters = location.state?.filters
   const { data: report, isLoading } = useReport(id)
   const updateStatus = useUpdateReportStatus()
+  const postFeedback = usePostFeedback(Number(id))
   const { user } = useAuthStore()
   const { data: allUsers } = useVisibleUsers()
   const canReview = isAdmin(user) || isRM(user, allUsers)
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const [form] = Form.useForm()
+
+  const handlePost = (vals) => {
+    postFeedback.mutate(vals, {
+      onSuccess: () => {
+        form.resetFields()
+        setDrawerOpen(false)
+        navigate('/report-explorer', { state: { filters } })
+      }
+    })
+  }
 
   if (isLoading) return <LoadingSpinner />
 
@@ -27,7 +44,7 @@ export default function ReportDetailPage() {
       <ReportCard report={report} />
 
       {canReview && (
-        <Card size="small" style={{ borderRadius: 8 }}>
+        <Card size="small">
           <Space align="center">
             <Typography.Text strong>Review Status:</Typography.Text>
             <Select
@@ -43,9 +60,53 @@ export default function ReportDetailPage() {
         </Card>
       )}
 
-      <Card title="Feedback" styles={{ body: { padding: '16px 24px' } }}>
-        <FeedbackPanel reportId={Number(id)} filters={filters} />
+      <Card
+        title="Feedback"
+        extra={
+          canReview && (
+            <Button
+              type="primary"
+              icon={<MessageOutlined />}
+              onClick={() => setDrawerOpen(true)}
+            >
+              Post Feedback
+            </Button>
+          )
+        }
+        styles={{ body: { padding: '16px 24px' } }}
+      >
+        <FeedbackPanel reportId={Number(id)} />
       </Card>
+
+      <Drawer
+        title="Post Feedback"
+        placement="right"
+        width={420}
+        open={drawerOpen}
+        onClose={() => { setDrawerOpen(false); form.resetFields() }}
+      >
+        <Form form={form} onFinish={handlePost} layout="vertical">
+          <Form.Item
+            name="comment"
+            label="Your Feedback"
+            rules={[{ required: true, message: 'Please enter your feedback' }]}
+          >
+            <Input.TextArea rows={6} placeholder="Write your feedback here..." />
+          </Form.Item>
+          <Form.Item name="is_flagged" valuePropName="checked">
+            <Checkbox>Flag this report for follow-up</Checkbox>
+          </Form.Item>
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={postFeedback.isPending}
+            block
+            size="large"
+          >
+            Submit Feedback
+          </Button>
+        </Form>
+      </Drawer>
     </div>
   )
 }
