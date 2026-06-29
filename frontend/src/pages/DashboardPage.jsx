@@ -1,4 +1,3 @@
-
 // ── frontend/src/pages/DashboardPage.jsx ────────────────────────
 import { useMemo } from 'react'
 import { Row, Col, Card, Typography, Space } from 'antd'
@@ -19,37 +18,49 @@ const { Title, Text } = Typography
 
 const GREEN  = '#52c41a'
 const ORANGE = '#fa8c16'
-const RED    = '#f5222d'
+const RED    = '#e24b4a'
 
 // ── KPI Card ─────────────────────────────────────────────────────
 function KpiCard({ icon, label, value, unit, todayValue, todayUnit, color }) {
   return (
     <Card
-      style={{ height: '100%', borderTop: `3px solid ${color}`, borderRadius: 10 }}
-      styles={{ body: { padding: '22px 24px' } }}
+      style={{
+        height: '100%',
+        borderRadius: 12,
+        borderTop: `3px solid ${color}`,
+        border: '0.5px solid #f0f0f0',
+      }}
+      styles={{ body: { padding: '20px 22px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' } }}
     >
-      <Space style={{ marginBottom: 14 }}>
+      {/* Top row: icon + label */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
         <div style={{
-          width: 38, height: 38, borderRadius: 9,
+          width: 36, height: 36, borderRadius: 9,
           background: `${color}1a`,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
           {icon}
         </div>
-        <Text type="secondary" style={{ fontSize: 13, fontWeight: 500 }}>{label}</Text>
-      </Space>
-
-      <div style={{ lineHeight: 1 }}>
-        <span style={{ fontSize: 40, fontWeight: 700, color: '#1a1a1a' }}>{value}</span>
-        <span style={{ fontSize: 14, color: '#a0a0a0', marginLeft: 6 }}>{unit}</span>
+        <Text style={{ fontSize: 12, color: '#a0a0a0', fontWeight: 500, letterSpacing: '0.04em' }}>
+          {label}
+        </Text>
       </div>
 
-      <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid #f0f0f0' }}>
-        <Text type="secondary" style={{ fontSize: 12 }}>
-          Today:{' '}
-          <span style={{ color, fontWeight: 600, fontSize: 13 }}>
-            {todayValue} {todayUnit}
-          </span>
+      {/* Value */}
+      <div style={{ marginBottom: 16, lineHeight: 1 }}>
+        <span style={{ fontSize: 42, fontWeight: 500, color: '#1a1a1a' }}>{value}</span>
+        <span style={{ fontSize: 14, color: '#a0a0a0', marginLeft: 5 }}>{unit}</span>
+      </div>
+
+      {/* Footer */}
+      <div style={{
+        borderTop: '0.5px solid #f0f0f0',
+        paddingTop: 11,
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      }}>
+        <Text style={{ fontSize: 12, color: '#a0a0a0' }}>Today</Text>
+        <Text style={{ fontSize: 13, fontWeight: 500, color: '#a0a0a0' }}>
+          {todayValue} {todayUnit}
         </Text>
       </div>
     </Card>
@@ -92,11 +103,11 @@ const DonutTooltip = ({ active, payload }) => {
 
 // ── Main ──────────────────────────────────────────────────────────
 export default function DashboardPage() {
-  const { user }              = useAuthStore()
-  const { data: allUsers }    = useVisibleUsers()
-  const canSeeTeam            = isAdmin(user) || isRM(user, allUsers)
-  const { data: status, isLoading: statusLoading } = useDailyStatus(today(), canSeeTeam)
-  const { data: myReports,   isLoading: reportsLoading } = useMyReports()
+  const { user }           = useAuthStore()
+  const { data: allUsers } = useVisibleUsers()
+  const canSeeTeam         = isAdmin(user) || isRM(user, allUsers)
+  const { data: status,    isLoading: statusLoading  } = useDailyStatus(today(), canSeeTeam)
+  const { data: myReports, isLoading: reportsLoading } = useMyReports()
 
   const todayStr = today()
 
@@ -104,12 +115,12 @@ export default function DashboardPage() {
   const kpi = useMemo(() => {
     if (!myReports) return { monthTasks: 0, todayTasks: 0, monthHours: 0, todayHours: 0 }
 
-    const thisMonth   = dayjs().format('YYYY-MM')
-    const monthReps   = myReports.filter(r => r.report_date?.startsWith(thisMonth))
-    const todayRep    = myReports.find(r => r.report_date === todayStr)
+    const thisMonth = dayjs().format('YYYY-MM')
+    const monthReps = myReports.filter(r => r.report_date?.startsWith(thisMonth))
+    const todayRep  = myReports.find(r => r.report_date === todayStr)
 
-    const tasks  = (reps) => reps.reduce((s, r) => s + (r.tasks?.length || 0), 0)
-    const hours  = (reps) => parseFloat(
+    const tasks = (reps) => reps.reduce((s, r) => s + (r.tasks?.length || 0), 0)
+    const hours = (reps) => parseFloat(
       reps.reduce((s, r) =>
         s + (r.tasks?.reduce((h, t) => h + (Number(t.time_spent_hours) || 0), 0) || 0), 0
       ).toFixed(1)
@@ -161,7 +172,7 @@ export default function DashboardPage() {
 
       {/* Header */}
       <div style={{ marginBottom: 28 }}>
-        <Title level={3} style={{ margin: 0, fontWeight: 700 }}>
+        <Title level={3} style={{ margin: 0, fontWeight: 500 }}>
           Welcome back, {user?.name}
         </Title>
         <Text type="secondary" style={{ fontSize: 14 }}>
@@ -169,12 +180,14 @@ export default function DashboardPage() {
         </Text>
       </div>
 
-      {/* KPI row */}
-      <Row gutter={20} style={{ marginBottom: 20 }}>
-        <Col span={12}>
+      {/* ── Top row: KPI cards + Team Overview donut ── */}
+      <Row gutter={14} style={{ marginBottom: 14 }} align="stretch">
+
+        {/* KPI: Monthly Tasks */}
+        <Col span={canSeeTeam ? 7 : 12}>
           <KpiCard
-            icon={<FileTextOutlined style={{ color: GREEN, fontSize: 18 }} />}
-            label="Monthly Tasks"
+            icon={<FileTextOutlined style={{ color: GREEN, fontSize: 17 }} />}
+            label="Monthly tasks"
             value={kpi.monthTasks}
             unit="tasks"
             todayValue={kpi.todayTasks}
@@ -182,10 +195,12 @@ export default function DashboardPage() {
             color={GREEN}
           />
         </Col>
-        <Col span={12}>
+
+        {/* KPI: Monthly Hours */}
+        <Col span={canSeeTeam ? 7 : 12}>
           <KpiCard
-            icon={<ClockCircleOutlined style={{ color: ORANGE, fontSize: 18 }} />}
-            label="Monthly Hours"
+            icon={<ClockCircleOutlined style={{ color: ORANGE, fontSize: 17 }} />}
+            label="Monthly hours"
             value={kpi.monthHours}
             unit="hrs"
             todayValue={kpi.todayHours}
@@ -193,29 +208,32 @@ export default function DashboardPage() {
             color={ORANGE}
           />
         </Col>
-      </Row>
 
-      {/* Charts row */}
-      <Row gutter={20}>
-
-        {/* Donut — team overview */}
+        {/* Team Overview Donut (admin/RM only) */}
         {canSeeTeam && (
-          <Col span={9}>
+          <Col span={10}>
             <Card
-              title="Team Overview — Today"
-              style={{ borderRadius: 10, height: '100%' }}
-              styles={{ body: { padding: '16px 20px 20px' } }}
+              style={{ borderRadius: 12, height: '100%', border: '0.5px solid #f0f0f0' }}
+              styles={{ body: { padding: '20px 22px', height: '100%' } }}
             >
+              <Text style={{
+                fontSize: 11, fontWeight: 500, textTransform: 'uppercase',
+                letterSpacing: '0.08em', color: '#a0a0a0', display: 'block', marginBottom: 16,
+              }}>
+                Team overview — today
+              </Text>
+
               {statusLoading ? <LoadingSpinner /> : (
-                <>
-                  {/* Donut with overlaid center label */}
-                  <div style={{ position: 'relative' }}>
-                    <ResponsiveContainer width="100%" height={210}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+
+                  {/* Donut */}
+                  <div style={{ position: 'relative', flexShrink: 0 }}>
+                    <ResponsiveContainer width={120} height={120}>
                       <PieChart>
                         <Pie
                           data={donutData}
                           cx="50%" cy="50%"
-                          innerRadius={62} outerRadius={85}
+                          innerRadius={38} outerRadius={56}
                           paddingAngle={3}
                           dataKey="value"
                           strokeWidth={0}
@@ -231,36 +249,61 @@ export default function DashboardPage() {
                       transform: 'translate(-50%, -50%)',
                       textAlign: 'center', pointerEvents: 'none',
                     }}>
-                      <div style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', lineHeight: 1 }}>
+                      <div style={{ fontSize: 22, fontWeight: 500, color: '#1a1a1a', lineHeight: 1 }}>
                         {donutTotal}
                       </div>
-                      <div style={{ fontSize: 11, color: '#a0a0a0', marginTop: 3 }}>members</div>
+                      <div style={{ fontSize: 10, color: '#a0a0a0', marginTop: 2 }}>members</div>
                     </div>
                   </div>
 
-                  {/* Legend */}
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: 16, marginTop: 8 }}>
+                  {/* Status breakdown beside the donut */}
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 10 }}>
                     {donutData.map(d => (
-                      <div key={d.name} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                        <div style={{ width: 9, height: 9, borderRadius: '50%', background: d.color, flexShrink: 0 }} />
-                        <Text style={{ fontSize: 12 }}>{d.name} <strong>{d.value}</strong></Text>
+                      <div key={d.name} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        {/* Dot */}
+                        <div style={{ width: 8, height: 8, borderRadius: '50%', background: d.color, flexShrink: 0 }} />
+                        {/* Label + bar */}
+                        <div style={{ flex: 1 }}>
+                          <Text style={{ fontSize: 12, color: '#595959', display: 'block' }}>{d.name}</Text>
+                          <div style={{ height: 4, background: '#f0f0f0', borderRadius: 2, marginTop: 4 }}>
+                            <div style={{
+                              height: 4, borderRadius: 2, background: d.color,
+                              width: donutTotal > 0 ? `${(d.value / donutTotal) * 100}%` : '0%',
+                            }} />
+                          </div>
+                        </div>
+                        {/* Count */}
+                        <Text style={{
+                          fontSize: 14, fontWeight: 500, minWidth: 18, textAlign: 'right',
+                          color: d.name === 'Missing' && d.value > 0 ? RED : '#1a1a1a',
+                        }}>
+                          {d.value}
+                        </Text>
                       </div>
                     ))}
                   </div>
-                </>
+                </div>
               )}
             </Card>
           </Col>
         )}
+      </Row>
 
-        {/* Line chart — weekly trend */}
-        <Col span={canSeeTeam ? 15 : 24}>
+      {/* ── Weekly trend chart ── */}
+      <Row>
+        <Col span={24}>
           <Card
-            title="Weekly Summary — Tasks & Hours"
-            style={{ borderRadius: 10 }}
-            styles={{ body: { padding: '12px 16px 16px' } }}
+            style={{ borderRadius: 12, border: '0.5px solid #f0f0f0' }}
+            styles={{ body: { padding: '20px 20px 14px' } }}
           >
-            <ResponsiveContainer width="100%" height={250}>
+            <Text style={{
+              fontSize: 11, fontWeight: 500, textTransform: 'uppercase',
+              letterSpacing: '0.08em', color: '#a0a0a0', display: 'block', marginBottom: 16,
+            }}>
+              Weekly summary — tasks &amp; hours
+            </Text>
+
+            <ResponsiveContainer width="100%" height={220}>
               <LineChart data={weeklyData} margin={{ top: 8, right: 16, left: -10, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f5f5f5" vertical={false} />
                 <XAxis
@@ -282,22 +325,14 @@ export default function DashboardPage() {
                 />
                 <ReTooltip content={<LineTooltip />} cursor={{ stroke: '#f0f0f0', strokeWidth: 2 }} />
                 <Line
-                  yAxisId="left"
-                  type="monotone"
-                  dataKey="tasks"
-                  name="Tasks"
-                  stroke={GREEN}
-                  strokeWidth={2.5}
+                  yAxisId="left" type="monotone" dataKey="tasks" name="Tasks"
+                  stroke={GREEN} strokeWidth={2}
                   dot={{ r: 4, fill: GREEN, strokeWidth: 0 }}
                   activeDot={{ r: 6, fill: GREEN }}
                 />
                 <Line
-                  yAxisId="right"
-                  type="monotone"
-                  dataKey="hours"
-                  name="Hours"
-                  stroke={ORANGE}
-                  strokeWidth={2.5}
+                  yAxisId="right" type="monotone" dataKey="hours" name="Hours"
+                  stroke={ORANGE} strokeWidth={2} strokeDasharray="5 4"
                   dot={{ r: 4, fill: ORANGE, strokeWidth: 0 }}
                   activeDot={{ r: 6, fill: ORANGE }}
                 />
@@ -305,18 +340,21 @@ export default function DashboardPage() {
             </ResponsiveContainer>
 
             {/* Legend */}
-            <div style={{ display: 'flex', justifyContent: 'center', gap: 24, marginTop: 6 }}>
-              {[{ color: GREEN, label: 'Tasks' }, { color: ORANGE, label: 'Hours' }].map(l => (
+            <div style={{ display: 'flex', justifyContent: 'center', gap: 24, marginTop: 10 }}>
+              {[{ color: GREEN, label: 'Tasks', dashed: false }, { color: ORANGE, label: 'Hours', dashed: true }].map(l => (
                 <div key={l.label} style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-                  <div style={{ width: 22, height: 3, background: l.color, borderRadius: 2 }} />
+                  <div style={{
+                    width: 22, height: 0,
+                    borderTop: `2.5px ${l.dashed ? 'dashed' : 'solid'} ${l.color}`,
+                  }} />
                   <Text style={{ fontSize: 12, color: '#595959' }}>{l.label}</Text>
                 </div>
               ))}
             </div>
           </Card>
         </Col>
-
       </Row>
+
     </div>
   )
 }
