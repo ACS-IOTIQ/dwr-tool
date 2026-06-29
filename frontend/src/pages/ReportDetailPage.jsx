@@ -1,7 +1,7 @@
 
 // ── frontend/src/pages/ReportDetailPage.jsx ─────────────────────
 import { useParams, useLocation } from 'react-router-dom'
-import { Row, Col, Select, Space, Typography } from 'antd'
+import { Row, Col, Select, Card, Space, Typography, Divider } from 'antd'
 import { useReport, useUpdateReportStatus } from '../hooks/useReports'
 import ReportCard from '../components/reports/ReportCard'
 import FeedbackPanel from '../components/feedback/FeedbackPanel'
@@ -23,26 +23,30 @@ export default function ReportDetailPage() {
   if (isLoading) return <LoadingSpinner />
 
   return (
-    <Row gutter={24}>
-      <Col span={16}>
-        <ReportCard report={report} />
-        {canReview && (
-          <Space style={{ marginTop: 12 }}>
-            <Typography.Text>Review Status:</Typography.Text>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20, maxWidth: 1100, margin: '0 auto' }}>
+      <ReportCard report={report} />
+
+      {canReview && (
+        <Card size="small" style={{ borderRadius: 8 }}>
+          <Space align="center">
+            <Typography.Text strong>Review Status:</Typography.Text>
             <Select
               value={report?.review_status}
-              style={{ width: 160 }}
+              style={{ width: 180 }}
               onChange={status => updateStatus.mutate({ id: Number(id), status })}
             >
-              {['PENDING','REVIEWED','FLAGGED'].map(s => <Select.Option key={s} value={s}>{s}</Select.Option>)}
+              {['PENDING', 'REVIEWED', 'FLAGGED'].map(s => (
+                <Select.Option key={s} value={s}>{s}</Select.Option>
+              ))}
             </Select>
           </Space>
-        )}
-      </Col>
-      <Col span={8}>
+        </Card>
+      )}
+
+      <Card title="Feedback" styles={{ body: { padding: '16px 24px' } }}>
         <FeedbackPanel reportId={Number(id)} filters={filters} />
-      </Col>
-    </Row>
+      </Card>
+    </div>
   )
 }
 

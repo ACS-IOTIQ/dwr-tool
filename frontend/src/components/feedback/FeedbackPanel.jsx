@@ -31,22 +31,24 @@ export default function FeedbackPanel({ reportId, filters }) {
   }
 
   return (
-    <div>
-      <Title level={5}>Feedback</Title>
-      {isLoading ? null : feedbacks?.length ? feedbacks.map(fb => <FeedbackCard key={fb.id} fb={fb} />) : <EmptyState description="No feedback yet" />}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {isLoading ? null : feedbacks?.length
+        ? feedbacks.map(fb => <FeedbackCard key={fb.id} fb={fb} />)
+        : <EmptyState description="No feedback yet" />
+      }
       {canPost && (
-        <>
-          <Divider />
-          <Form form={form} onFinish={handlePost} layout="vertical">
-            <Form.Item name="comment" rules={[{ required: true, message: 'Enter feedback' }]}>
-              <Input.TextArea rows={3} placeholder="Your feedback..." />
-            </Form.Item>
-            <Form.Item name="is_flagged" valuePropName="checked">
-              <Checkbox>Flag this report for follow-up</Checkbox>
-            </Form.Item>
-            <Button type="primary" htmlType="submit" loading={postFeedback.isPending}>Post Feedback</Button>
-          </Form>
-        </>
+        <Form form={form} onFinish={handlePost} layout="vertical" style={{ marginTop: 8 }}>
+          <Divider orientation="left" plain>Leave Feedback</Divider>
+          <Form.Item name="comment" rules={[{ required: true, message: 'Enter feedback' }]}>
+            <Input.TextArea rows={4} placeholder="Your feedback..." />
+          </Form.Item>
+          <Form.Item name="is_flagged" valuePropName="checked" style={{ marginBottom: 12 }}>
+            <Checkbox>Flag this report for follow-up</Checkbox>
+          </Form.Item>
+          <Button type="primary" htmlType="submit" loading={postFeedback.isPending} block>
+            Post Feedback
+          </Button>
+        </Form>
       )}
     </div>
   )
