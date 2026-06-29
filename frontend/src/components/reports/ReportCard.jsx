@@ -1,12 +1,13 @@
 
 // ── frontend/src/components/reports/ReportCard.jsx ───────────────
-import { Card, Tag, Descriptions, Table, Typography, Space } from 'antd'
+import { Card, Tag, Descriptions, Table, Typography, Space, Button } from 'antd'
+import { MessageOutlined } from '@ant-design/icons'
 import { ReviewStatusBadge } from '../common/StatusBadge'
 import { fmtDateTime, fmt } from '../../utils/dateUtils'
 
 const { Text } = Typography
 
-export default function ReportCard({ report }) {
+export default function ReportCard({ report, canPostFeedback, onPostFeedback }) {
   if (!report) return null
 
   const cols = [
@@ -27,9 +28,20 @@ export default function ReportCard({ report }) {
     <Card
       title={`Report — ${fmt(report.report_date)}`}
       extra={
-        <Space>
+        <Space size="small">
           <ReviewStatusBadge status={report.review_status} />
           {report.is_late && <Tag color="orange">Late</Tag>}
+          {canPostFeedback && (
+            <Button
+              type="primary"
+              size="small"
+              icon={<MessageOutlined />}
+              onClick={onPostFeedback}
+              style={{ marginLeft: 8 }}
+            >
+              Post Feedback
+            </Button>
+          )}
         </Space>
       }
       styles={{ body: { padding: '20px 24px' } }}
