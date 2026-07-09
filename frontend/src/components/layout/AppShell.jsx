@@ -9,11 +9,11 @@ const { Content } = Layout
 
 export default function AppShell() {
   return (
-    <Layout style={{ minHeight: '100vh' }}>
+    <Layout style={{ height: '100vh', overflow: 'hidden' }}>
       <Sidebar />
-      <Layout>
+      <Layout style={{ height: '100vh' }}>
         <Topbar />
-        <Content style={{ margin: '24px 16px', padding: 24, background: '#fff', borderRadius: 8 }}>
+        <Content style={{ flex: 1, minHeight: 0, overflowY: 'auto', margin: '20px 16px', padding: 0, background: 'transparent' }}>
           <Outlet />
         </Content>
       </Layout>

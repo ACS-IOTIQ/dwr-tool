@@ -20,7 +20,20 @@ import './styles/layout.css'
 
 export default function App() {
   return (
-    <ConfigProvider theme={{ algorithm: theme.defaultAlgorithm }}>
+    <ConfigProvider
+      theme={{
+        algorithm: theme.defaultAlgorithm,
+        token: {
+          fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+          fontWeightStrong: 500,
+          colorText: '#1a1a1a',
+          colorTextSecondary: '#9a9a9a',
+          colorPrimary: '#5B6AF0',
+          borderRadius: 8,
+          fontSize: 13,
+        },
+      }}
+    >
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />

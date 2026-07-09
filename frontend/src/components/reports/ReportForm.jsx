@@ -1,8 +1,8 @@
 
 // ── frontend/src/components/reports/ReportForm.jsx ───────────────
 import { useState } from 'react'
-import { Form, Button, DatePicker, Input, Rate, Space, Typography, Divider, message } from 'antd'
-import { PlusOutlined } from '@ant-design/icons'
+import { Form, Button, DatePicker, Input, Rate, Space, Typography, Divider, Card, message } from 'antd'
+import { PlusOutlined, CalendarOutlined, ImportOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs'
 import TaskRow from './TaskRow'
 import { getMyCommitTasks } from '../../api/commitTasksApi'
@@ -82,6 +82,16 @@ export default function ReportForm({ workTypes, onSubmit, loading }) {
     }
   }
 
+  const SectionLabel = ({ children }) => (
+    <div style={{
+      fontSize: 11, fontWeight: 600, letterSpacing: '0.08em',
+      textTransform: 'uppercase', color: '#a0a0a0',
+      marginBottom: 12, marginTop: 8,
+    }}>
+      {children}
+    </div>
+  )
+
   return (
     <Form
       form={form}
@@ -89,18 +99,37 @@ export default function ReportForm({ workTypes, onSubmit, loading }) {
       onFinish={handleFinish}
       initialValues={{ report_date: dayjs(), tasks: [{ status: 'DONE' }] }}
     >
-      <Title level={4}>Daily Work Report</Title>
+      <div style={{ marginBottom: 24 }}>
+        <Title level={4} style={{ margin: 0, fontWeight: 500, color: '#1a1a1a' }}>
+          Daily Work Report
+        </Title>
+        <span style={{ fontSize: 13, color: '#a0a0a0' }}>
+          Log your tasks and progress for the day
+        </span>
+      </div>
 
-      <Form.Item name="report_date" label="Report Date" rules={[{ required: true }]}>
-        <DatePicker style={{ width: 200 }} disabledDate={d => d && d > dayjs()} />
+      <SectionLabel>Report Date</SectionLabel>
+      <Form.Item name="report_date" rules={[{ required: true }]} style={{ marginBottom: 20 }}>
+        <DatePicker
+          style={{ width: 200 }}
+          disabledDate={d => d && d > dayjs()}
+          suffixIcon={<CalendarOutlined style={{ color: '#a0a0a0' }} />}
+        />
       </Form.Item>
 
-      <Divider orientation="left">Tasks</Divider>
-      <Space style={{ marginBottom: 16 }}>
-        <Button onClick={handleImportFromCommits} loading={isImporting}>
-          Fetch Tasks From Commits
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+        <SectionLabel>Tasks</SectionLabel>
+        <Button
+          size="small"
+          icon={<ImportOutlined />}
+          onClick={handleImportFromCommits}
+          loading={isImporting}
+          style={{ fontSize: 12, color: '#a0a0a0', border: '1px solid #f0f0f0' }}
+        >
+          Import from Commits
         </Button>
-      </Space>
+      </div>
+
       <Form.List name="tasks">
         {(fields, { add, remove }) => (
           <>
@@ -113,26 +142,31 @@ export default function ReportForm({ workTypes, onSubmit, loading }) {
                 isOnly={fields.length === 1}
               />
             ))}
-            <Button type="dashed" icon={<PlusOutlined />} onClick={() => add({ status: 'DONE' })}>
+            <Button
+              type="dashed"
+              icon={<PlusOutlined />}
+              onClick={() => add({ status: 'DONE' })}
+              style={{ width: '100%', marginBottom: 20, borderColor: '#e8e8e8', color: '#a0a0a0', fontSize: 13 }}
+            >
               Add Task
             </Button>
           </>
         )}
       </Form.List>
 
-      <Divider orientation="left">Summary</Divider>
-      <Form.Item name="plan_for_tomorrow" label="Plan for Tomorrow">
-        <Input.TextArea rows={2} placeholder="What will you work on tomorrow?" />
+      <SectionLabel>Summary</SectionLabel>
+      <Form.Item name="plan_for_tomorrow" label="Plan for Tomorrow" style={{ marginBottom: 14 }}>
+        <Input.TextArea rows={2} placeholder="What will you work on tomorrow?" style={{ resize: 'none', fontSize: 13 }} />
       </Form.Item>
-      <Form.Item name="blockers" label="Blockers / Impediments">
-        <Input.TextArea rows={2} placeholder="Any blockers? Leave blank if none." />
+      <Form.Item name="blockers" label="Blockers / Impediments" style={{ marginBottom: 14 }}>
+        <Input.TextArea rows={2} placeholder="Any blockers? Leave blank if none." style={{ resize: 'none', fontSize: 13 }} />
       </Form.Item>
-      <Form.Item name="mood_rating" label="Energy / Mood (optional)">
+      <Form.Item name="mood_rating" label="Energy / Mood (optional)" style={{ marginBottom: 24 }}>
         <Rate count={5} />
       </Form.Item>
 
-      <Form.Item>
-        <Button type="primary" htmlType="submit" loading={loading} size="large">
+      <Form.Item style={{ marginBottom: 0 }}>
+        <Button type="primary" htmlType="submit" loading={loading} size="large" style={{ fontWeight: 500, paddingInline: 32 }}>
           Submit Report
         </Button>
       </Form.Item>

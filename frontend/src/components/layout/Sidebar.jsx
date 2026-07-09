@@ -8,10 +8,13 @@ import {
   TagsOutlined, CalendarOutlined, BarChartOutlined
 } from '@ant-design/icons'
 import { useAuthStore } from '../../store/authStore'
-import { isAdmin, isRM } from '../../utils/roleUtils'
+import { isAdmin, isRM, ROLE_LABELS } from '../../utils/roleUtils'
 import { useVisibleUsers } from '../../hooks/useUsers'
 
 const { Sider } = Layout
+
+const initials = (name = '') =>
+  name.trim().split(/\s+/).slice(0, 2).map(w => w[0]?.toUpperCase()).join('')
 
 export default function Sidebar() {
   const nav = useNavigate()
@@ -35,7 +38,7 @@ export default function Sidebar() {
   ].filter(Boolean)
 
   return (
-    <Sider collapsible breakpoint="lg" className="app-sider">
+    <Sider collapsible breakpoint="lg" width={196} className="app-sider">
       <div className="app-brand">
         <span className="app-brand-mark">DWR</span>
         <span className="app-brand-text">Tool</span>
@@ -49,6 +52,15 @@ export default function Sidebar() {
         inlineIndent={18}
         onClick={({ key }) => nav(key)}
       />
+      <div className="app-sider-footer">
+        <div className="app-sider-user">
+          <div className="app-sider-avatar">{initials(user?.name)}</div>
+          <div className="app-sider-user-meta">
+            <span className="app-sider-user-name">{user?.name}</span>
+            <span className="app-sider-user-role">{ROLE_LABELS[user?.role]}</span>
+          </div>
+        </div>
+      </div>
     </Sider>
   )
 }
